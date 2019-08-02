@@ -29,3 +29,7 @@ For more information see here -> https://grpc.io/docs/quickstart/
 
     echo "Generate Golang *.pb"
     python3 ./regenerate-proto.py --proto_dir ./api --golang
+
+
+
+### More here -> https://medium.com/red-crane/grpc-and-why-it-can-save-you-development-time-436168fd0cbc
