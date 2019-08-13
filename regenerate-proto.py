@@ -27,14 +27,15 @@ GOLANG_PROTOC_TEMPLATE = "protoc " \
                          "{proto}"
 
 
-def get_proto(root: str):
-    protos = {}
+def get_proto(root: str) -> []:
+    proto_dirs = []
     for dirpath, _, fnames in os.walk(root):
         for fname in fnames:
             if fname.endswith(".proto"):
-               protos[fname] = dirpath
+               proto_dirs.append(dirpath)
+               break  # need only dir name
 
-    return protos
+    return proto_dirs
 
 
 if __name__ == "__main__":
@@ -44,23 +45,23 @@ if __name__ == "__main__":
     print(f"Generate code for Python: {args.python}")
     print(f"Generate code for Golang: {args.golang}")
 
-    proto_files = get_proto(args.proto_dir)
-    print(f"Found proto files: {proto_files}")
+    proto_dirs = get_proto(args.proto_dir)
+    print(f"Found proto dirs: {proto_dirs}")
 
-    for proto_file, dir in proto_files.items():
+    for dir in proto_dirs:
         if args.python:
             proto_build_cmd = PYTHON_PROTOC_TEMPLATE.format(
                 I="/".join(dir.split('/')[:-2]),
                 python_out=args.out_dir,
                 grpc_python_out=args.out_dir,
-                proto=os.path.join(dir, proto_file))
+                proto=os.path.join(dir, "*.proto"))
             print(f"[Python]: {proto_build_cmd}")
             os.system(proto_build_cmd)
         elif args.golang:
             proto_build_cmd = GOLANG_PROTOC_TEMPLATE.format(
                 I="/".join(dir.split('/')[:-2]),
                 go_out=args.out_dir,
-                proto=os.path.join(dir, proto_file))
+                proto=os.path.join(dir, "*.proto"))
             print(f"[Golang]: {proto_build_cmd}")
             os.system(proto_build_cmd)
 
